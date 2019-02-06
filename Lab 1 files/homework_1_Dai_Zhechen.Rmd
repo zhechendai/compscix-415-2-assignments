@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-My Github repository for my assignments can be found at this URL:[https://github.com/zhechendai/compscix-415-2-assignments]
+My Github repository for my assignments can be found at this [MY URL](https://github.com/zhechendai/compscix-415-2-assignments)
 
 ```{r load_packages, warning=FALSE, message=FALSE}
 library(mdsr)
@@ -19,6 +19,7 @@ data('WorldCities')
 
 ### Question 1:
 There are 23,018 observations and 10 variables in this data set. The variables are code, name, latitude, longitude, country, countryRegion, population, regionCode, region, data.
+(Method: Run '?WorldCities' in R Console)
 
 ```{r}
 glimpse(WorldCities)
@@ -41,7 +42,6 @@ unique(region_col)
 ```{r}
 WorldCities %>% select(country) %>% unique()
 ```
-
 
 ```{r}
 WorldCities %>% ggplot(aes(x = population)) + geom_histogram()
