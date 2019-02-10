@@ -1,0 +1,185 @@
+---
+title: "COMPSCIX 415.2 Homework 2"
+author: "Dai_Zhechen"
+date: "2019/2/9"
+output: html_document
+self_contained: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load_packages, warning=FALSE, message=FALSE}
+library(mdsr)
+library(tidyverse)
+data('mpg')
+```
+### Exercise 3.2.4 (1)
+```{r}
+library(ggplot2)
+ggplot(data = mpg)
+```
+
+It shows a plot but with nothing on it.
+
+### Exercise 3.2.4 (2)
+mpg has 234 rows and 11 columns
+```{r}
+glimpse(mpg)
+```
+
+### Exercise 3.2.4 (3)
+drv: drivetrain
+
+f = front-wheel drive, r = rear wheel drive, 4 = 4wd
+
+### Exercise 3.2.4 (4)
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = hwy, y = cyl))
+```
+
+### Exercise 3.2.4 (5)
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = class, y = drv))
+```
+
+In this plot, it shows little information which you can easily find from the data table and it is no need to analyze them.
+
+### Exercise 3.3.1 (1)
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy), color = "blue")
+```
+
+One parentheses should stay behind hwy rather than behind blue''
+
+### Exercise 3.3.1 (2)
+categorical variables: model, trans, drv, fl, class
+
+continuous variables: displ, year, cyl, cty, hwy
+
+they can be seen by mapping them to color, size, shape
+
+### Exercise 3.3.1 (3)
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = displ))
+```
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, size = displ))
+```
+
+A continuous variable can not be mapped to shape
+
+### Exercise 3.3.1 (4)
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, size = displ, color = displ))
+```
+
+The plot will combine multiple aesthetics.
+
+### Exercise 3.3.1 (5)
+For shapes that have a border, you can colour the inside and outside separately. Use the stroke aesthetic to modify the width of the border
+
+### Exercise 3.3.1 (6)
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, colour = displ < 5))
+```
+
+It will classify the data into two catalogs.
+
+### Exercise 3.5.1 (4)
+nrow: Number of rows
+
+ncol: Number of colimns
+
+facets, scales, shrink, labeller, as.table, switch, drop, dir, strip.position
+because for  facet_grid(), most displays are not roughly rectangular.
+
+### Exercise 3.5.1 (5)
+Because it facet my plot on the combination of two variables
+
+### Exercise 3.6.1 (1)
+line chart: geom_lm
+
+boxplot: geom_boxploth
+
+histogram: geom_histogramh
+
+area chart: geom_area
+
+### Exercise 3.6.1 (2)
+Prediction: This plot contains points and lines, and the data is classified by color by different drv
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)
+```
+
+### Exercise 3.6.1 (3)
+show.legend = FALSE: logical. Should this layer be included in the legends?  FALSE never includes
+
+aesthetics may not show
+
+To ensure aesthetics
+
+### Exercise 3.6.1 (4)
+se: Display confidence interval around smooth? (TRUE by default, see level to control.)
+
+### Exercise 3.6.1 (5)
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  geom_smooth()
+```
+```{r}
+ggplot() + 
+  geom_point(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_smooth(data = mpg, mapping = aes(x = displ, y = hwy))
+```
+
+They are the same meaning, the plots are same. Only the different between the code, it's the less code writing method
+
+### Exercise 3.6.1 (6)
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  geom_smooth()
+```
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  geom_smooth(mapping = aes(group = drv))
+```
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point(mapping = aes(color = drv)) + 
+  geom_smooth(mapping = aes(group = drv))
+```
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point(mapping = aes(color = drv)) + 
+  geom_smooth()
+```
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point(mapping = aes(color = drv)) + 
+  geom_smooth(mapping = aes(linetype = drv))
+```
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point(mapping = aes(color = drv))
+```
+
+### Exercise 3.7.1 (2)
+geom_col(): Bar Charts
+difference between geom_bar(): geom_bar() makes the height of the bar proportional to the number of cases in each group (or if the weight aesthetic is supplied, the sum of the weights). If you want the heights of the bars to represent values in the data, use geom_col() instead. geom_bar() uses stat_count() by default: it counts the number of cases at each x position. geom_col() uses stat_identity(): it leaves the data as is.
+
+##Answer these questions
+the pie charts and bar charts work well and show the information clearly, but when talk about obstale and who does a data scientist work with it only shows proportion numbers which are not very clear and it is hard for people to compare them, I would like to change into pie chart or bar chart. In the part of 'Business Intelligence professionals overwhelmingly studied Business in university' it is annoying and hard to get the conclusion that data scientist have more varied backgrounds.
