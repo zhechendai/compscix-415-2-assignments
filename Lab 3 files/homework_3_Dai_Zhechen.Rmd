@@ -1,0 +1,154 @@
+---
+title: "COMPSCIX 415.2 Homework 3"
+author: "Dai_Zhechen"
+date: "2/19/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load_packages, warning=FALSE, message=FALSE}
+library(mdsr)
+library(tidyverse)
+data('mpg')
+```
+
+##Exercises 3.8.1
+###(1)
+There is no critical relationship with city miles per gallon and highway miles per gallon. It is useless to make such plot.
+
+###(2)
+From the help pane: "POSITION"
+Position adjustment, either as a string, or the result of a call to a position adjustment function.
+
+###(3)
+`geom_jitter`: The jitter geom is a convenient shortcut for `geom_point(position = "jitter")`. It adds a small amount of random variation to the location of each point, and is a useful way of handling overplotting caused by discreteness in smaller datasets.
+
+`geom_count`: This is a variant `geom_point()` that counts the number of observations at each location, then maps the count to point area. It useful when you have discrete data and overplotting.
+
+###(4)
+```{r}
+ggplot(data = mpg, mapping = aes(x = class, y = hwy)) + 
+  geom_boxplot()
+```
+
+The boxplot compactly displays the distribution of a continuous variable. It visualises five summary statistics (the median, two hinges and two whiskers), and all "outlying" points individually.
+
+##Exercises 3.9.1
+###(2)
+`labs()`: Modify axis, legend, and plot labels, Good labels are critical for making your plots accessible to a wider audience. Always ensure the axis and legend labels display the full variable name. Use the plot title and subtitle to explain the main findings. It's common to use the caption to provide information about the data source. tag can be used for adding identification tags to differentiate between multiple plots.
+
+###(4)
+1.Hwy is greater than cty
+
+2.A fixed scale coordinate system forces a specified ratio between the physical representation of data units on the axes. The ratio represents the number of units on the y-axis equivalent to one unit on the x-axis. The default, ratio = 1, ensures that one unit on the x-axis is the same length as one unit on the y-axis. Ratios higher than one make units on the y axis longer than units on the x-axis, and vice versa.
+
+####It is easy to find which one is greater since the slope(ratio) is forever 1
+
+3.`geom_abline`: Reference lines: horizontal, vertical, and diagonal, These geoms add reference lines (sometimes called rules) to a plot, either horizontal, vertical, or diagonal (specified by slope and intercept). These are useful for annotating plots.
+
+##Practice 4.4
+###(1)
+The variable name shoule be `my_variable`, it is `i` not `l`
+
+###(2)
+
+```{r}
+library(tidyverse)
+data('diamonds')
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+
+filter(mpg, cyl == 8)
+filter(diamonds, carat > 3)
+```
+
+Change `=` to `==` which means equal to, change variable name `diamond` to `diamonds` which has been defined.
+
+##Exercises 5.2.4
+###(1)
+```{r}
+library(nycflights13)
+glimpse(flights)
+```
+1.
+```{r}
+filter(flights, arr_delay > 120)
+```
+
+2.
+```{r}
+filter(flights, dest == 'IAH' | dest == 'HOU')
+```
+
+3.
+```{r}
+filter(flights, carrier == 'UA' | carrier == 'AA' | carrier == 'DL')
+```
+
+4.
+```{r}
+filter(flights, month == 7| month == 8| month == 9)
+```
+
+5.
+```{r}
+filter(flights, arr_delay >= 120 & dep_delay <= 0)
+```
+
+6.
+```{r}
+filter(flights, dep_delay >= 60, (dep_delay - arr_delay > 30))
+```
+
+6.
+```{r}
+filter(flights, dep_time >= 2400 & dep_time <= 600)
+```
+
+###(3)
+```{r}
+sum(is.na(flights$dep_time))
+map_dbl(flights, ~ sum(is.na(.x)))
+```
+
+1.There are 8255 flights have a missing dep_time
+
+2.Show in the figure
+
+3.These rows represent different punctuality rate
+
+###(4)
+Because anything that is `^ 0` equals `1`.
+Because NA | TRUE is saying whether one of the two is `TRUE` and the second one is.
+Because at least one of the two expressions can be tested: FALSE & NA. In NA & NA neither can be tested and the results is `NA & NA`.
+
+##Exercises 5.4.1
+###(1)
+```{r}
+vars <- c("dep_time", "dep_delay", "arr_time", "arr_delay")
+select(flights, dep_time, dep_delay, arr_time, arr_delay)
+select(flights, starts_with("dep"), starts_with("arr"))
+select(flights, one_of(vars))
+select_(flights, .dots = vars)
+select_(flights, "dep_time", "dep_delay", "arr_time", "arr_delay")
+select(flights, matches("dep"), matches("arr"), -matches("sched"), -carrier)
+select(flights, contains("dep"), contains("arr"), -contains("sched"), -carrier)
+select(flights, matches("^dep|^arr"))
+select(flights, matches("time$|delay$"), -contains("sched"), -contains("air"))
+select(flights, matches("^dep|arr_delay|time$"))
+```
+
+###(3)
+1.
+```{r}
+vars <- c("year", "month", "day", "dep_delay", "arr_delay")
+select(flights, one_of(vars))
+```
+
+It works because select only accepts variable names without `" "` quotes.
+
+2.By including inside `one_of()` one can use character names.
