@@ -1,0 +1,224 @@
+---
+title: "COMPSCIX 415.2 Homework 4"
+author: "Dai_Zhechen"
+date: "2/22/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r load_packages, warning=FALSE, message=FALSE}
+library(mdsr)
+library(tidyverse)
+library(nycflights13)
+```
+##Exercises 5.6.7
+###(2)
+
+```{r}
+not_cancelled <-
+  flights %>% 
+  filter(!is.na(dep_delay), !is.na(arr_delay))
+```
+```{r}
+not_cancelled %>% count(dest)
+```
+####without using `count()`
+```{r}
+not_cancelled %>%
+  group_by(dest) %>%
+  summarise(n = n())
+```
+```{r}
+not_cancelled %>% count(tailnum, wt = distance)
+```
+####without using `count()`
+```{r}
+not_cancelled %>%
+  group_by(tailnum) %>%
+  summarize(n = sum(distance))
+```
+
+###(4)
+```{r}
+flights %>%
+  group_by(day) %>%
+  summarise(cancelled = mean(is.na(dep_delay)),
+            mean_dep = mean(dep_delay, na.rm = T),
+            mean_arr = mean(arr_delay, na.rm = T)) %>%
+  ggplot(aes(y = cancelled)) +
+  geom_point(aes(x = mean_dep), colour = "red") +
+  geom_point(aes(x = mean_arr), colour = "blue") +
+  labs(x = "Avg delay per day", y = "Cancelled flights per day")
+```
+
+It looks like they have the positive relationship with each other, the higher the average delay per day, the higher the cancelled flights per day.
+
+###(6)
+You can use the `sort` to sort the cases based on the `count()`.
+
+###(5) Extra Credit
+1.
+```{r}
+flights %>%
+  group_by(carrier) %>%
+  summarise(dep_max = max(dep_delay, na.rm = T),
+            arr_max = max(arr_delay, na.rm = T)) %>%
+  arrange(desc(dep_max, arr_max)) %>%
+  filter(1:n() == 1)
+```
+
+Carrier `HA`
+
+##Exercises 10.5
+###(1)
+```{r}
+data("mtcars")
+class(mtcars)
+
+mtcars <- as_tibble(mtcars)
+class(mtcars)
+```
+
+Get the `class()` of object and see whether it has `tbl_df` and `tbl`.
+
+###(2)
+```{r}
+df <- data.frame(abc = 1, xyz = "a")
+df$x
+df[, "xyz"]
+df[, c("abc", "xyz")]
+```
+
+```{r}
+df <- as_tibble(data.frame(abc = 1, xyz = "a"))
+df$x
+df[, "xyz"]
+df[, c("abc", "xyz")]
+```
+
+In some cases, a data frame will returns a different thing.
+
+Tibble will return the same thing, providing consistency.
+
+###(3)
+```{r}
+var <- "mpg"
+as_tibble(mtcars)[[var]]
+```
+
+###(6)
+`options(tibble.width = Inf)` for all columns to be printed (Confused)
+
+##Exercises 12.3.3
+###(2)
+```{r}
+table4a %>% 
+  gather("1999", "2000", key = "year", value = "cases")
+```
+
+Because `gather()` can not find the columns' name
+
+###(3)
+```{r}
+people <- tribble(
+  ~name,             ~key,    ~value,
+  #-----------------|--------|------
+  "Phillip Woods",   "age",       45,
+  "Phillip Woods",   "height",   186,
+  "Phillip Woods",   "age",       50,
+  "Jessica Cordero", "age",       37,
+  "Jessica Cordero", "height",   156
+)
+```
+```{r}
+people %>%
+  mutate(unique_id = c(1, 2, 2, 3, 3)) %>%
+  select(unique_id, everything()) %>%
+  spread(key, value)
+```
+
+Phillip Woods has two columns of age, it is inpossible for one person, we need to unique them.
+
+###(4)
+```{r}
+preg <- tribble(
+  ~pregnant, ~male, ~female,
+  "yes",     NA,    10,
+  "no",      20,    12
+)
+```
+
+Gather it.
+```{r}
+preg %>%
+  gather(gender, values, -pregnant)
+```
+
+##Exercises 12.4.3
+###(1)
+`extra` If sep is a character vector, this controls what happens when there are too many pieces. There are three valid options:
+
+"warn" (the default): emit a warning and drop extra values.
+
+"drop": drop any extra values without a warning.
+
+"merge": only splits at most length(into) times
+
+`fill` If sep is a character vector, this controls what happens when there are not enough pieces. There are three valid options:
+
+"warn" (the default): emit a warning and fill from the right
+
+"right": fill with missing values on the right
+
+"left": fill with missing values on the left
+
+```{r}
+tibble(x = c("a,b,c", "d,e,f,g", "h,i,j")) %>% 
+  separate(x, c("one", "two", "three"))
+tibble(x = c("a,b,c", "d,e,f,g", "h,i,j")) %>% 
+  separate(x, c("one", "two", "three"), extra = "warn")
+tibble(x = c("a,b,c", "d,e,f,g", "h,i,j")) %>% 
+  separate(x, c("one", "two", "three"), extra = "drop")
+tibble(x = c("a,b,c", "d,e,f,g", "h,i,j")) %>% 
+  separate(x, c("one", "two", "three"), extra = "merge")
+```
+```{r}
+tibble(x = c("a,b,c", "d,e,f,g", "h,i,j")) %>% 
+  separate(x, c("one", "two", "three", "four"))
+tibble(x = c("a,b,c", "d,e,f,g", "h,i,j")) %>% 
+  separate(x, c("one", "two", "three", "four"), fill = "warn")
+tibble(x = c("a,b,c", "d,e,f,g", "h,i,j")) %>% 
+  separate(x, c("one", "two", "three", "four"), fill = "right")
+tibble(x = c("a,b,c", "d,e,f,g", "h,i,j")) %>% 
+  separate(x, c("one", "two", "three", "four"), fill = "left")
+```
+
+###(2)
+`unite()` `remove`	If TRUE, remove input columns from output data frame.
+
+`separate()` `remove`	If TRUE, remove input column from output data frame.
+
+Allows you to remove the original columns that you unite/separate on.You might want to leave them as they are if you're checking whether the transformation was done correctly.
+
+##Answer these questions:
+###1.
+```{r}
+library(tidyverse)
+file_path <- '/Users/jerryd/Desktop/JERRYGit/Lab4files/baby_names.txt'
+txt_data <- read.delim2(file = '/Users/jerryd/Desktop/JERRYGit/Lab4files/baby_names.txt', sep = "|")
+```
+```{r}
+glimpse(txt_data)
+```
+```{r}
+write_csv(txt_data, path = '/Users/jerryd/Desktop/JERRYGit/Lab4files/baby_names.csv')
+```
+```{r}
+file_path <- '/Users/jerryd/Desktop/JERRYGit/Lab4files/baby_names.csv'
+csv_data <- read_csv(file = '/Users/jerryd/Desktop/JERRYGit/Lab4files/baby_names.csv')
+```
+```{r}
+glimpse(csv_data)
+```
