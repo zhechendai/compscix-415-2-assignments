@@ -69,6 +69,7 @@ flights %>%
   filter(1:n() == 1)
 ```
 
+
 Carrier `HA`
 
 ##Exercises 10.5
@@ -223,4 +224,3 @@ csv_data <- read_csv(file = '/Users/jerryd/Desktop/JERRYGit/Lab4files/baby_names
 glimpse(csv_data)
 ```
 
-test for pushing to github
