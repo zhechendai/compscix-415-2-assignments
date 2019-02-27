@@ -17,7 +17,7 @@ library(tidyverse)
 data('WorldCities')
 ```
 
-### Question 1:
+## Question 1:
 There are 23,018 observations and 10 variables in this data set. The variables are code, name, latitude, longitude, country, countryRegion, population, regionCode, region, data.
 (Method: Run '?WorldCities' in R Console)
 
