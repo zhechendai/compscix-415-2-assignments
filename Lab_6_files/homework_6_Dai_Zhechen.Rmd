@@ -1,0 +1,125 @@
+---
+title: "COMPSCIX 415.2 Homework 6"
+author: "Dai_Zhechen"
+date: "2019/3/9"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+```{R}
+library(tidyverse)
+library(mosaicData)
+```
+###Exercise 1
+```{r}
+glimpse(Whickham)
+help("Whickham")
+```
+
+1. There are `3` variables in this data set.
+
+2. There are `1314` observations on women for the following variables.
+
+outcome survival status after 20 years: a factor with levels Alive Dead
+
+smoker smoking status at baseline: a factor with levels No Yes
+
+age age (in years) at the time of the first survey
+
+3.
+```{r}
+Whickham %>% count(smoker,outcome)
+Whickham %>% ggplot() + geom_bar(aes(x = smoker, fill=outcome))
+```
+
+There are more people alive than dead whethere she is a smoker or not
+
+It is hard to find out the correlation between mortality rate and smoker smoking status.
+
+4.
+```{r}
+age <- Whickham %>% select(age)
+age_cat <- case_when(age <= 44 ~ "<=44", 
+                     age>44 & age<= 64 ~ "> 44 & <= 64", 
+                     age> 64 ~ ">64")
+age_fct <- factor(age_cat, ordered =TRUE)
+age_fct <- fct_relevel(age_fct, "<=44", "> 44 & <= 64", ">64")
+Whickham %>% ggplot() + geom_bar(aes(x=smoker,fill=outcome)) + facet_grid(~ factor(age_fct))
+```
+
+We can see that ages may cause the difference betwwen smoking status and outcome.
+
+Yes, it make sence! Because smoking status makes a few influnce when people are young, but with the increase of the age, the ratio between different outcome increase.
+
+###Exercise 2
+1.
+```{r}
+n=10000
+gamma_samp <- tibble(x = rgamma(n, shape = 1, scale = 2))
+ggplot() + geom_histogram(aes(x = gamma_samp$x))
+```
+
+2.
+```{r}
+mean_samp <- gamma_samp %>% .[['x']] %>% mean()
+sd_samp <- gamma_samp %>% .[['x']] %>% sd()
+mean_samp
+sd_samp
+```
+
+3.
+```{r}
+n=30
+gamma_samp <- tibble(x = rgamma(n, shape = 1, scale = 2))
+ggplot() + geom_histogram(aes(x = gamma_samp$x))
+mean_samp <- gamma_samp %>% .[['x']] %>% mean()
+sd_samp <- gamma_samp %>% .[['x']] %>% sd()
+mean_samp
+sd_samp
+```
+
+4.
+```{r}
+mean_samp <- rep(NA, 10000)
+for(i in 1:10000) {
+  g_samp <- rgamma(30, shape = 1, scale = 2)
+  mean_samp[i] <- mean(g_samp)
+}
+mean_samp <- tibble(mean_samp)
+mean_samp
+```
+
+5.
+```{r}
+ggplot() + geom_histogram(aes(x = mean_samp$mean_samp))
+```
+
+6.
+```{r}
+mean(mean_samp$mean_samp)
+sd(mean_samp$mean_samp)
+```
+
+7.
+The mean is close to 2, which is expected, it should be similiar to the above value, however here mean value is the mean of mean, but std is pretty small, I guess it is beacuse it's the std of mean.
+
+8.
+```{r}
+mean_samp <- rep(NA, 10000)
+for(i in 1:10000) {
+  g_samp <- rgamma(300, shape = 1, scale = 2)
+  mean_samp[i] <- mean(g_samp)
+}
+mean_samp <- tibble(mean_samp)
+mean_samp
+ggplot() + geom_histogram(aes(x = mean_samp$mean_samp))
+mean(mean_samp$mean_samp)
+sd(mean_samp$mean_samp)
+sd <- 2/sqrt(300)
+sd
+```
+
+My results match up well with the theorem.
